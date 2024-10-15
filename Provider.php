@@ -37,6 +37,34 @@ class Provider extends AbstractProvider
     }
 
     /**
+     * Get the GET parameters for the code request.
+     *
+     * @param  string|null  $state
+     * @return array
+     */
+    protected function getCodeFields($state = null)
+    {
+        $fields = [
+            'client_id' => $this->clientId,
+            'redirect_uri' => $this->redirectUrl,
+            'scope' => $this->formatScopes($this->getScopes(), $this->scopeSeparator),
+            'response_type' => 'code id_token',
+            'nonce' => '987654321'
+        ];
+
+        if ($this->usesState()) {
+            $fields['state'] = $state;
+        }
+
+        if ($this->usesPKCE()) {
+            $fields['code_challenge'] = $this->getCodeChallenge();
+            $fields['code_challenge_method'] = $this->getCodeChallengeMethod();
+        }
+
+        return array_merge($fields, $this->parameters);
+    }
+
+    /**
      * Return the logout endpoint with an optional post_logout_redirect_uri query parameter.
      *
      * @param  string|null  $redirectUri  The URI to redirect to after logout, if provided.
