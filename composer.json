@@ -1,5 +1,5 @@
 {
-    "name": "socialiteproviders/microsoft-azure",
+    "name": "kcjameswatts/microsoft-azure",
     "description": "Microsoft Azure OAuth2 Provider for Laravel Socialite",
     "license": "MIT",
     "keywords": [
@@ -14,6 +14,9 @@
         {
             "name": "Chris Hemmings",
             "email": "chris@hemmin.gs"
+        },{
+            "name": "James Watts",
+            "email": "keith.c.j.watts@gmail.com"
         }
     ],
     "support": {
