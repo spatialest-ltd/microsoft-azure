@@ -1,6 +1,6 @@
 {
     "name": "kcjameswatts/microsoft-azure",
-    "description": "Entra ID App Provider for Laravel Socialite w/ roles",
+    "description": "Azure/Entra Provider for Laravel Socialite w/ App Roles",
     "license": "MIT",
     "keywords": [
         "azure",
