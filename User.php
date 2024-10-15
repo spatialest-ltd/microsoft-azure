@@ -1,6 +1,6 @@
 <?php
 
-namespace GTC\Azure;
+namespace SocialiteProviders\Entra;
 
 use SocialiteProviders\Manager\OAuth2\User as oAuth2User;
 
