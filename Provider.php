@@ -1,13 +1,13 @@
 <?php
 
-namespace GTC\Azure;
+namespace SocialiteProviders\Entra;
 
 use GuzzleHttp\RequestOptions;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider;
 
 class Provider extends AbstractProvider
 {
-    public const IDENTIFIER = 'AZURE';
+    public const IDENTIFIER = 'ENTRA';
 
     /**
      * The base Azure Graph URL.
