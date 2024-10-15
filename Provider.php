@@ -26,7 +26,7 @@ class Provider extends AbstractProvider
      *
      * @var array
      */
-    protected $scopes = ['User.Read'];
+    protected $scopes = ['User.Read','openid'];
 
     /**
      * {@inheritdoc}
