@@ -1,13 +1,13 @@
 <?php
 
-namespace GTC\Azure;
+namespace SocialiteProviders\Entra;
 
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
-class AzureExtendSocialite
+class EntraExtendSocialite
 {
     public function handle(SocialiteWasCalled $socialiteWasCalled): void
     {
-        $socialiteWasCalled->extendSocialite('azure', Provider::class);
+        $socialiteWasCalled->extendSocialite('entra', Provider::class);
     }
 }
