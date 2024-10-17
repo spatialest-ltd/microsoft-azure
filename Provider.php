@@ -3,6 +3,8 @@
 namespace SocialiteProviders\Entra;
 
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Arr;
+use Laravel\Socialite\Two\InvalidStateException;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider;
 
 class Provider extends AbstractProvider
@@ -31,6 +33,14 @@ class Provider extends AbstractProvider
     /**
      * {@inheritdoc}
      */
+    public static function additionalConfigKeys()
+    {
+        return ['tenant', 'proxy'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getAuthUrl($state)
     {
         return $this->buildAuthUrlFromBase($this->getBaseUrl().'/oauth2/v2.0/authorize', $state);
@@ -49,6 +59,7 @@ class Provider extends AbstractProvider
             'redirect_uri' => $this->redirectUrl,
             'scope' => $this->formatScopes($this->getScopes(), $this->scopeSeparator),
             'response_type' => 'code id_token',
+            'response_mode' => 'form_post',
             'nonce' => '987654321'
         ];
 
@@ -107,7 +118,7 @@ class Provider extends AbstractProvider
         $response = $this->getHttpClient()->get($this->graphUrl, [
             RequestOptions::HEADERS => [
                 'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
+                'Authorization' => 'Bearer ' . $token,
             ],
             RequestOptions::PROXY => $this->getConfig('proxy'),
         ]);
@@ -157,10 +168,47 @@ class Provider extends AbstractProvider
     }
 
     /**
-     * {@inheritdoc}
+     * Get the id token from the token response body.
+     *
+     * @param array $body
+     *
+     * @return string
      */
-    public static function additionalConfigKeys()
+    protected function parseIdToken($body)
     {
-        return ['tenant', 'proxy'];
+        return Arr::get($body, 'id_token');
+    }
+
+    /**
+     * @return User
+     *
+     * @throws \Laravel\Socialite\Two\InvalidStateException
+     */
+    public function user()
+    {
+        if ($this->user) {
+            return $this->user;
+        }
+
+        if ($this->hasInvalidState()) {
+            throw new InvalidStateException();
+        }
+
+        $response = $this->getAccessTokenResponse($this->getCode());
+        $this->credentialsResponseBody = $response;
+
+        $this->user = $this->mapUserToObject($this->getUserByToken(
+            $token = $this->parseAccessToken($response)
+        ));
+
+        if ($this->user instanceof User) {
+            $this->user->setAccessTokenResponseBody($this->credentialsResponseBody);
+        }
+
+        return $this->user->setToken($token)
+            ->setIdToken($this->parseIdToken($response))
+            ->setRefreshToken($this->parseRefreshToken($response))
+            ->setExpiresIn($this->parseExpiresIn($response))
+            ->setApprovedScopes($this->parseApprovedScopes($response));
     }
 }
